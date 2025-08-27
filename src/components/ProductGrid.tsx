@@ -8,77 +8,77 @@ import laptopImg from "@/assets/product-laptop.jpg";
 const sampleProducts = [
   {
     id: "1",
-    name: "Premium Wireless Headphones with Noise Cancellation",
-    price: 199.99,
-    originalPrice: 299.99,
-    rating: 4.5,
-    reviews: 2847,
+    name: "Экскаватор CATERPILLAR 320D - Гусеничный, 20 тонн",
+    price: 2850000,
+    originalPrice: 3200000,
+    rating: 4.8,
+    reviews: 127,
     image: headphonesImg,
-    badge: "Best Seller",
+    badge: "Хит Продаж",
   },
   {
     id: "2",
-    name: "Latest Smartphone with Advanced Camera System",
-    price: 899.99,
-    originalPrice: 999.99,
-    rating: 4.8,
-    reviews: 1923,
+    name: "Автокран LIEBHERR 50 тонн - Мобильный, телескопический",
+    price: 4500000,
+    originalPrice: 5000000,
+    rating: 4.9,
+    reviews: 89,
     image: phoneImg,
-    badge: "New",
+    badge: "Новинка",
   },
   {
     id: "3",
-    name: "Professional Running Shoes for Athletes",
-    price: 129.99,
+    name: "Бульдозер KOMATSU D65 - Гусеничный, мощность 190 л.с.",
+    price: 3200000,
     rating: 4.6,
-    reviews: 856,
+    reviews: 156,
     image: shoesImg,
   },
   {
     id: "4",
-    name: "High-Performance Laptop for Professionals",
-    price: 1299.99,
-    originalPrice: 1599.99,
+    name: "Погрузчик VOLVO L120H - Фронтальный, ковш 3.5 м³",
+    price: 2750000,
+    originalPrice: 3100000,
     rating: 4.7,
-    reviews: 743,
+    reviews: 98,
     image: laptopImg,
-    badge: "Sale",
+    badge: "Акция",
   },
   {
     id: "5",
-    name: "Ultra-Portable Wireless Earbuds",
-    price: 79.99,
-    originalPrice: 99.99,
-    rating: 4.3,
-    reviews: 1234,
+    name: "Самосвал KAMAZ 65115 - Грузоподъемность 15 тонн",
+    price: 1850000,
+    originalPrice: 2100000,
+    rating: 4.5,
+    reviews: 234,
     image: headphonesImg,
   },
   {
     id: "6",
-    name: "Gaming Smartphone with RGB Lighting",
-    price: 749.99,
+    name: "Компрессор Atlas Copco - Передвижной, производительность 12 м³/мин",
+    price: 850000,
     rating: 4.4,
-    reviews: 567,
+    reviews: 67,
     image: phoneImg,
-    badge: "Gaming",
+    badge: "Проф",
   },
   {
     id: "7",
-    name: "Comfortable Daily Wear Sneakers",
-    price: 89.99,
-    originalPrice: 119.99,
-    rating: 4.2,
-    reviews: 432,
+    name: "Виброкаток BOMAG 120 - Двухвальцовый, вес 12 тонн",
+    price: 1950000,
+    originalPrice: 2200000,
+    rating: 4.3,
+    reviews: 43,
     image: shoesImg,
   },
   {
     id: "8",
-    name: "Lightweight Business Laptop",
-    price: 899.99,
-    rating: 4.5,
-    reviews: 321,
+    name: "Телескопический погрузчик MANITOU MLT 634 - Высота подъема 6 м",
+    price: 1650000,
+    rating: 4.6,
+    reviews: 78,
     image: laptopImg,
-    badge: "Business",
+    badge: "Надежный",
   },
 ];
 
@@ -88,10 +88,10 @@ export const ProductGrid = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Featured Products
+            Рекомендуемая Техника
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover our handpicked selection of top-quality products from trusted sellers worldwide
+            Проверенная спецтехника от ведущих производителей с гарантией качества и сервисным обслуживанием
           </p>
         </div>
 
@@ -103,7 +103,7 @@ export const ProductGrid = () => {
 
         <div className="text-center mt-12">
           <Button variant="outline" size="lg">
-            View All Products
+            Весь Каталог Техники
           </Button>
         </div>
       </div>

@@ -68,7 +68,7 @@ export const ProductCard = ({
           <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Button variant="cart" size="sm" className="w-full">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
+              В Корзину
             </Button>
           </div>
         </div>
@@ -100,18 +100,18 @@ export const ProductCard = ({
           {/* Price */}
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-price">
-              ${price.toFixed(2)}
+              {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(price)}
             </span>
             {originalPrice && (
               <span className="text-sm text-muted-foreground line-through">
-                ${originalPrice.toFixed(2)}
+                {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(originalPrice)}
               </span>
             )}
           </div>
 
           {/* Buy now button */}
           <Button variant="buy" size="sm" className="w-full">
-            Buy Now
+            Купить Сейчас
           </Button>
         </div>
       </CardContent>

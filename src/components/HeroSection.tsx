@@ -11,24 +11,24 @@ export const HeroSection = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                Discover Amazing
+                Профессиональная
                 <span className="bg-hero-gradient bg-clip-text text-transparent block">
-                  Products
+                  Спецтехника
                 </span>
-                Worldwide
+                для Любых Задач
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg">
-                Connect with millions of buyers and sellers. Find everything you need from electronics to fashion, all in one place.
+                Широкий выбор строительной и специальной техники. Экскаваторы, автокраны, бульдозеры и многое другое для вашего бизнеса.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button variant="hero" size="xl" className="group">
-                Start Shopping
+                Смотреть Каталог
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button variant="outline" size="xl">
-                Become a Seller
+                Стать Поставщиком
               </Button>
             </div>
 
@@ -38,19 +38,19 @@ export const HeroSection = () => {
                 <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto">
                   <Truck className="h-6 w-6 text-primary" />
                 </div>
-                <p className="text-sm font-medium">Fast Delivery</p>
+                <p className="text-sm font-medium">Быстрая Доставка</p>
               </div>
               <div className="text-center space-y-2">
                 <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto">
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
-                <p className="text-sm font-medium">Secure Payment</p>
+                <p className="text-sm font-medium">Гарантия Качества</p>
               </div>
               <div className="text-center space-y-2">
                 <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto">
                   <Star className="h-6 w-6 text-primary" />
                 </div>
-                <p className="text-sm font-medium">Top Quality</p>
+                <p className="text-sm font-medium">Сервисная Поддержка</p>
               </div>
             </div>
           </div>
@@ -60,7 +60,7 @@ export const HeroSection = () => {
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <img 
                 src={heroBanner} 
-                alt="Featured products showcase"
+                alt="Спецтехника в работе"
                 className="w-full h-96 lg:h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -69,7 +69,7 @@ export const HeroSection = () => {
               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg animate-float">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-semibold">1M+ Products</span>
+                  <span className="text-sm font-semibold">5000+ Единиц</span>
                 </div>
               </div>
               

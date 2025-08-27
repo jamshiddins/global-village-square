@@ -1,78 +1,78 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  Laptop, 
-  Shirt, 
-  Home, 
-  Dumbbell, 
-  Book, 
-  Sparkles,
-  Smartphone,
-  Car
+  Construction, 
+  Truck, 
+  Drill, 
+  Wrench, 
+  Building, 
+  Car,
+  HardHat,
+  Forklift
 } from "lucide-react";
 
 const categories = [
   {
-    id: "electronics",
-    name: "Electronics",
-    icon: Laptop,
-    count: "50,000+",
-    color: "text-blue-600",
-    bgColor: "bg-blue-50 dark:bg-blue-950",
-  },
-  {
-    id: "fashion",
-    name: "Fashion",
-    icon: Shirt,
-    count: "75,000+",
-    color: "text-pink-600",
-    bgColor: "bg-pink-50 dark:bg-pink-950",
-  },
-  {
-    id: "home",
-    name: "Home & Garden",
-    icon: Home,
-    count: "30,000+",
-    color: "text-green-600",
-    bgColor: "bg-green-50 dark:bg-green-950",
-  },
-  {
-    id: "sports",
-    name: "Sports",
-    icon: Dumbbell,
-    count: "25,000+",
+    id: "excavators",
+    name: "Экскаваторы",
+    icon: Construction,
+    count: "500+",
     color: "text-orange-600",
     bgColor: "bg-orange-50 dark:bg-orange-950",
   },
   {
-    id: "books",
-    name: "Books",
-    icon: Book,
-    count: "100,000+",
+    id: "cranes",
+    name: "Автокраны",
+    icon: Car,
+    count: "300+",
+    color: "text-blue-600",
+    bgColor: "bg-blue-50 dark:bg-blue-950",
+  },
+  {
+    id: "trucks",
+    name: "Грузовики",
+    icon: Truck,
+    count: "800+",
+    color: "text-green-600",
+    bgColor: "bg-green-50 dark:bg-green-950",
+  },
+  {
+    id: "forklifts",
+    name: "Погрузчики",
+    icon: Forklift,
+    count: "400+",
     color: "text-purple-600",
     bgColor: "bg-purple-50 dark:bg-purple-950",
   },
   {
-    id: "beauty",
-    name: "Beauty",
-    icon: Sparkles,
-    count: "40,000+",
-    color: "text-rose-600",
-    bgColor: "bg-rose-50 dark:bg-rose-950",
+    id: "tools",
+    name: "Инструменты",
+    icon: Drill,
+    count: "2000+",
+    color: "text-red-600",
+    bgColor: "bg-red-50 dark:bg-red-950",
   },
   {
-    id: "mobile",
-    name: "Mobile & Tech",
-    icon: Smartphone,
-    count: "35,000+",
+    id: "services",
+    name: "Сервис",
+    icon: Wrench,
+    count: "150+",
     color: "text-indigo-600",
     bgColor: "bg-indigo-50 dark:bg-indigo-950",
   },
   {
-    id: "automotive",
-    name: "Automotive",
-    icon: Car,
-    count: "20,000+",
+    id: "construction",
+    name: "Стройтехника",
+    icon: Building,
+    count: "600+",
+    color: "text-yellow-600",
+    bgColor: "bg-yellow-50 dark:bg-yellow-950",
+  },
+  {
+    id: "safety",
+    name: "Безопасность",
+    icon: HardHat,
+    count: "350+",
     color: "text-slate-600",
     bgColor: "bg-slate-50 dark:bg-slate-950",
   },
@@ -84,10 +84,10 @@ export const CategorySection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Shop by Category
+            Категории Техники
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Browse through our extensive collection of products across various categories
+            Выберите нужную категорию спецтехники из нашего обширного каталога профессионального оборудования
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export const CategorySection = () => {
                     {category.name}
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    {category.count} items
+                    {category.count} единиц
                   </p>
                 </div>
               </CardContent>
@@ -117,7 +117,7 @@ export const CategorySection = () => {
 
         <div className="text-center mt-12">
           <Button variant="hero" size="lg">
-            Explore All Categories
+            Посмотреть Все Категории
           </Button>
         </div>
       </div>
