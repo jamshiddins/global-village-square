@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 export interface WishlistItem {
   id: string;
-  user_id: string;
   product_id: string;
-  created_at: string;
   product_name: string;
   product_price: number;
   product_image: string;
+  created_at: string;
 }
 
 export const useWishlist = () => {
@@ -19,23 +17,24 @@ export const useWishlist = () => {
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchWishlistItems = async () => {
-    if (!user) return;
-    
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('wishlist_items')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-      setItems(data || []);
-    } catch (error) {
-      console.error('Error fetching wishlist:', error);
-    } finally {
-      setLoading(false);
+  // Load wishlist from localStorage
+  useEffect(() => {
+    if (user) {
+      const savedWishlist = localStorage.getItem(`wishlist_${user.id}`);
+      if (savedWishlist) {
+        setItems(JSON.parse(savedWishlist));
+      }
+    } else {
+      setItems([]);
     }
+  }, [user]);
+
+  // Save wishlist to localStorage
+  const saveWishlist = (newItems: WishlistItem[]) => {
+    if (user) {
+      localStorage.setItem(`wishlist_${user.id}`, JSON.stringify(newItems));
+    }
+    setItems(newItems);
   };
 
   const addToWishlist = async (productId: string, productName: string, productPrice: number, productImage: string) => {
@@ -48,67 +47,52 @@ export const useWishlist = () => {
       return false;
     }
 
-    try {
-      const { data, error } = await supabase
-        .from('wishlist_items')
-        .insert({
-          user_id: user.id,
-          product_id: productId,
-          product_name: productName,
-          product_price: productPrice,
-          product_image: productImage,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      await fetchWishlistItems();
+    // Check if already in wishlist
+    if (items.some(item => item.product_id === productId)) {
       toast({
-        title: "Добавлено в избранное",
-        description: `${productName} добавлен в избранное`,
-      });
-      return true;
-    } catch (error) {
-      console.error('Error adding to wishlist:', error);
-      toast({
-        title: "Ошибка",
-        description: "Не удалось добавить в избранное",
+        title: "Уже в избранном",
+        description: "Этот товар уже добавлен в избранное",
         variant: "destructive",
       });
       return false;
     }
+
+    const newItem: WishlistItem = {
+      id: `wishlist_${Date.now()}_${productId}`,
+      product_id: productId,
+      product_name: productName,
+      product_price: productPrice,
+      product_image: productImage,
+      created_at: new Date().toISOString(),
+    };
+
+    const newItems = [...items, newItem];
+    saveWishlist(newItems);
+    toast({
+      title: "Добавлено в избранное",
+      description: `${productName} добавлен в избранное`,
+    });
+    return true;
   };
 
   const removeFromWishlist = async (productId: string) => {
     if (!user) return;
 
-    try {
-      const { error } = await supabase
-        .from('wishlist_items')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('product_id', productId);
-
-      if (error) throw error;
-
-      await fetchWishlistItems();
-      toast({
-        title: "Удалено из избранного",
-        description: "Товар удален из избранного",
-      });
-    } catch (error) {
-      console.error('Error removing from wishlist:', error);
-    }
+    const newItems = items.filter(item => item.product_id !== productId);
+    saveWishlist(newItems);
+    toast({
+      title: "Удалено из избранного",
+      description: "Товар удален из избранного",
+    });
   };
 
   const isInWishlist = (productId: string) => {
     return items.some(item => item.product_id === productId);
   };
 
-  useEffect(() => {
-    fetchWishlistItems();
-  }, [user]);
+  const fetchWishlistItems = async () => {
+    // Already handled by useEffect
+  };
 
   return {
     items,

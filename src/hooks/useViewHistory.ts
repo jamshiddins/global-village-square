@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface ViewHistoryItem {
   id: string;
-  user_id: string;
   product_id: string;
-  created_at: string;
   product_name: string;
   product_price: number;
   product_image: string;
+  created_at: string;
 }
 
 export const useViewHistory = () => {
@@ -17,67 +15,50 @@ export const useViewHistory = () => {
   const [items, setItems] = useState<ViewHistoryItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchViewHistory = async () => {
-    if (!user) return;
-    
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('view_history')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-      setItems(data || []);
-    } catch (error) {
-      console.error('Error fetching view history:', error);
-    } finally {
-      setLoading(false);
+  // Load view history from localStorage
+  useEffect(() => {
+    if (user) {
+      const savedHistory = localStorage.getItem(`viewHistory_${user.id}`);
+      if (savedHistory) {
+        setItems(JSON.parse(savedHistory));
+      }
+    } else {
+      setItems([]);
     }
+  }, [user]);
+
+  // Save view history to localStorage
+  const saveViewHistory = (newItems: ViewHistoryItem[]) => {
+    if (user) {
+      localStorage.setItem(`viewHistory_${user.id}`, JSON.stringify(newItems));
+    }
+    setItems(newItems);
   };
 
   const addToViewHistory = async (productId: string, productName: string, productPrice: number, productImage: string) => {
     if (!user) return;
 
-    try {
-      // Check if already exists
-      const { data: existing } = await supabase
-        .from('view_history')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('product_id', productId)
-        .single();
+    // Remove existing entry if it exists
+    const filteredItems = items.filter(item => item.product_id !== productId);
+    
+    // Add new entry at the beginning
+    const newItem: ViewHistoryItem = {
+      id: `history_${Date.now()}_${productId}`,
+      product_id: productId,
+      product_name: productName,
+      product_price: productPrice,
+      product_image: productImage,
+      created_at: new Date().toISOString(),
+    };
 
-      if (existing) {
-        // Update timestamp
-        await supabase
-          .from('view_history')
-          .update({ created_at: new Date().toISOString() })
-          .eq('id', existing.id);
-      } else {
-        // Insert new record
-        await supabase
-          .from('view_history')
-          .insert({
-            user_id: user.id,
-            product_id: productId,
-            product_name: productName,
-            product_price: productPrice,
-            product_image: productImage,
-          });
-      }
-
-      await fetchViewHistory();
-    } catch (error) {
-      console.error('Error adding to view history:', error);
-    }
+    // Keep only last 20 items
+    const newItems = [newItem, ...filteredItems].slice(0, 20);
+    saveViewHistory(newItems);
   };
 
-  useEffect(() => {
-    fetchViewHistory();
-  }, [user]);
+  const fetchViewHistory = async () => {
+    // Already handled by useEffect
+  };
 
   return {
     items,
