@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      cart_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_price: number
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_price: number
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          product_image?: string
+          product_name?: string
+          product_price?: number
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -49,6 +82,66 @@ export type Database = {
           phone?: string | null
           role?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      view_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_price: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_price: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          product_image?: string
+          product_name?: string
+          product_price?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlist_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_price: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          product_image: string
+          product_name: string
+          product_price: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          product_image?: string
+          product_name?: string
+          product_price?: number
           user_id?: string
         }
         Relationships: []

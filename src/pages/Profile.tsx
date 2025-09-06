@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
+import { useViewHistory } from '@/hooks/useViewHistory';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { 
   User, 
@@ -15,11 +19,11 @@ import {
   Calendar,
   Settings,
   LogOut,
-  TrendingUp,
-  DollarSign,
-  Target,
-  Activity,
-  BarChart3
+  ShoppingCart,
+  Heart,
+  Eye,
+  Package,
+  ArrowRight
 } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
@@ -39,6 +43,9 @@ const Profile = () => {
   const navigate = useNavigate();
   const { user, signOut, loading } = useAuth();
   const { toast } = useToast();
+  const { items: cartItems, totalItems: cartCount, totalPrice } = useCart();
+  const { items: wishlistItems } = useWishlist();
+  const { items: viewHistory } = useViewHistory();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
@@ -98,40 +105,33 @@ const Profile = () => {
 
   const stats = [
     {
-      title: "Общий оборот",
-      value: "₽2.1 млрд",
-      change: "+15.3%",
-      icon: DollarSign,
-      positive: true
+      title: "Товаров в корзине",
+      value: cartCount.toString(),
+      subtitle: `На сумму ${new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(totalPrice)}`,
+      icon: ShoppingCart,
+      action: () => navigate('/cart')
     },
     {
-      title: "Активных сделок",
-      value: "23",
-      change: "+3",
-      icon: Target,
-      positive: true
+      title: "В избранном",
+      value: wishlistItems.length.toString(),
+      subtitle: "товаров",
+      icon: Heart,
+      action: () => navigate('/wishlist')
     },
     {
-      title: "Баланс кошелька",
-      value: "₽45.2 млн",
-      change: "-5.1%",
-      icon: TrendingUp,
-      positive: false
+      title: "Просмотрено",
+      value: viewHistory.length.toString(),
+      subtitle: "товаров",
+      icon: Eye,
+      action: () => {}
     },
     {
-      title: "Средний ROI",
-      value: "12.5%",
-      change: "+2.1%",
-      icon: BarChart3,
-      positive: true
+      title: "Заказы",
+      value: "0",
+      subtitle: "активных заказов",
+      icon: Package,
+      action: () => {}
     }
-  ];
-
-  const tasks = [
-    { title: "Купить технику", count: 127, available: "127 доступно", color: "bg-blue-500/20 border-blue-500/50" },
-    { title: "Продать технику", count: 5, available: "5 активных", color: "bg-purple-500/20 border-purple-500/50" },
-    { title: "Арендовать", count: 89, available: "89 свободно", color: "bg-indigo-500/20 border-indigo-500/50" },
-    { title: "Сдать в аренду", count: 4, available: "4 ед. техники", color: "bg-pink-500/20 border-pink-500/50" }
   ];
 
   return (
@@ -222,18 +222,24 @@ const Profile = () => {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric'
-                })} г. • У вас 3 новых уведомления и 2 задачи требуют внимания
+                })} г. • Ваш профиль активен
               </p>
             </div>
 
             {/* Key Stats */}
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-                📊 Ключевые показатели
+                📊 Активность аккаунта
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {stats.map((stat, index) => (
-                  <Card key={index} className="bg-dashboard-card border-border hover:bg-dashboard-card-hover transition-colors">
+                  <Card 
+                    key={index} 
+                    className={`bg-dashboard-card border-border hover:bg-dashboard-card-hover transition-all cursor-pointer ${
+                      stat.action && 'hover:scale-105'
+                    }`}
+                    onClick={stat.action}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
@@ -245,16 +251,10 @@ const Profile = () => {
                             <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                           </div>
                         </div>
-                        <Badge 
-                          variant="outline" 
-                          className={`${
-                            stat.positive 
-                              ? 'text-stats-positive border-stats-positive/50' 
-                              : 'text-stats-negative border-stats-negative/50'
-                          }`}
-                        >
-                          {stat.change}
-                        </Badge>
+                        <div className="text-right">
+                          <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
+                          {stat.action && <ArrowRight className="h-4 w-4 text-muted-foreground mt-2 ml-auto" />}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -262,26 +262,67 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Task Center */}
+            {/* Quick Actions */}
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-                ⚡ Центр задач
+              <h3 className="text-lg font-semibold text-foreground mb-4">
+                ⚡ Быстрые действия
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {tasks.map((task, index) => (
-                  <Card key={index} className={`${task.color} border transition-all hover:scale-105 cursor-pointer`}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-foreground">{task.title}</h4>
-                        <Activity className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-2">{task.available}</p>
-                      <p className="text-3xl font-bold text-foreground">{task.count}</p>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate('/catalog')}>
+                  <CardContent className="p-6 text-center">
+                    <Package className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <h4 className="font-semibold mb-1">Каталог</h4>
+                    <p className="text-sm text-muted-foreground">Просмотреть товары</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate('/cart')}>
+                  <CardContent className="p-6 text-center">
+                    <ShoppingCart className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <h4 className="font-semibold mb-1">Корзина</h4>
+                    <p className="text-sm text-muted-foreground">{cartCount} товаров</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate('/wishlist')}>
+                  <CardContent className="p-6 text-center">
+                    <Heart className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <h4 className="font-semibold mb-1">Избранное</h4>
+                    <p className="text-sm text-muted-foreground">{wishlistItems.length} товаров</p>
+                  </CardContent>
+                </Card>
               </div>
             </div>
+
+            {/* Recent History */}
+            {viewHistory.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  👀 Недавно просмотренные
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {viewHistory.slice(0, 6).map((item) => (
+                    <Card key={item.id} className="hover:shadow-lg transition-all cursor-pointer">
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3">
+                          <img 
+                            src={item.product_image} 
+                            alt={item.product_name}
+                            className="w-12 h-12 object-cover rounded border"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-sm truncate">{item.product_name}</h4>
+                            <p className="text-sm text-price font-semibold">
+                              {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(item.product_price)}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

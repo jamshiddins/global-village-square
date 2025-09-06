@@ -259,7 +259,7 @@ const ProductDetail = () => {
               {Object.entries(product.specifications).map(([key, value]) => (
                 <div key={key} className="flex justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">{key}</span>
-                  <span className="font-medium">{value}</span>
+                  <span className="font-medium">{String(value)}</span>
                 </div>
               ))}
             </div>
