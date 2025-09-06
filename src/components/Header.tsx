@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigation } from "@/hooks/useNavigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/hooks/useCart";
+import { MobileNav } from "@/components/MobileNav";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +19,9 @@ export const Header = () => {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      handleAction(`Поиск: ${searchQuery}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/search');
     }
   };
 
@@ -39,15 +42,8 @@ export const Header = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden"
-              onClick={() => handleAction("Меню")}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center space-x-2">
+            <MobileNav />
+            <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/')}>
               <Building2 className="h-6 w-6 text-primary" />
               <div className="text-2xl font-bold text-primary">
                 MAYDON

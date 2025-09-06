@@ -14,44 +14,49 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <>
+      <title>MAYDON - Маркетплейс спецтехники | Продажа и аренда строительной техники</title>
+      <meta name="description" content="MAYDON - ведущий маркетплейс спецтехники в России. Купить или арендовать экскаваторы, автокраны, погрузчики, бульдозеры и другую строительную технику от проверенных поставщиков." />
       
-      {/* Demo Banner */}
-      <div className="container mx-auto px-4 pt-4">
-        <DemoDataBanner />
-      </div>
-      
-      {/* Quick Access Bar for Authentication */}
-      {!user && (
-        <div className="bg-primary/10 border-b border-border">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <User className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium">Войдите для доступа к личному кабинету</span>
+      <div className="min-h-screen bg-background">
+        <Header />
+        
+        {/* Demo Banner */}
+        <div className="container mx-auto px-4 pt-4">
+          <DemoDataBanner />
+        </div>
+        
+        {/* Quick Access Bar for Authentication */}
+        {!user && (
+          <div className="bg-primary/10 border-b border-border">
+            <div className="container mx-auto px-4 py-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <User className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">Войдите для доступа к личному кабинету</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/auth')}
+                  className="flex items-center space-x-2"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Войти</span>
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/auth')}
-                className="flex items-center space-x-2"
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Войти</span>
-              </Button>
             </div>
           </div>
-        </div>
-      )}
-      
-      <main>
-        <HeroSection />
-        <CategorySection />
-        <ProductGrid />
-      </main>
-      <Footer />
-    </div>
+        )}
+        
+        <main>
+          <HeroSection />
+          <CategorySection />
+          <ProductGrid />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 };
 

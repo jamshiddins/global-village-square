@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { useCart } from '@/hooks/useCart';
-import { useWishlist } from '@/hooks/useWishlist';
-import { useViewHistory } from '@/hooks/useViewHistory';
-import { useAuth } from '@/contexts/AuthContext';
+import { products } from "@/data/products";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useViewHistory } from "@/hooks/useViewHistory";
+import { useAuth } from "@/contexts/AuthContext";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { 
   ArrowLeft, 
   Star, 
@@ -23,33 +25,9 @@ import {
   Clock
 } from 'lucide-react';
 
-// Sample product data - in real app this would come from API
-const sampleProducts = {
-  '1': {
-    id: '1',
-    name: 'Экскаватор Caterpillar 320D',
-    price: 5500000,
-    originalPrice: 6000000,
-    rating: 4.8,
-    reviews: 127,
-    image: '/src/assets/product-headphones.jpg',
-    category: 'Экскаваторы',
-    description: 'Мощный гусеничный экскаватор Caterpillar 320D с рабочим весом 20 тонн. Идеально подходит для земляных работ, строительства и коммунальных нужд.',
-    specifications: {
-      'Мощность двигателя': '122 кВт (163 л.с.)',
-      'Рабочий вес': '20 100 кг',
-      'Глубина копания': '6 520 мм',
-      'Высота выгрузки': '6 100 мм',
-      'Радиус копания': '9 640 мм',
-      'Объем ковша': '1,0 м³'
-    },
-    seller: {
-      name: 'ТехноСпец',
-      rating: 4.9,
-      location: 'Москва, Россия',
-      phone: '+7 (495) 123-45-67'
-    }
-  }
+// Get product data from our products array
+const getProductById = (id: string) => {
+  return products.find(p => p.id === id);
 };
 
 const ProductDetail = () => {
@@ -65,17 +43,19 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    if (id && sampleProducts[id as keyof typeof sampleProducts]) {
-      const productData = sampleProducts[id as keyof typeof sampleProducts];
-      setProduct(productData);
-      
-      // Add to view history
-      addToViewHistory(
-        productData.id,
-        productData.name,
-        productData.price,
-        productData.image
-      );
+    if (id) {
+      const productData = getProductById(id);
+      if (productData) {
+        setProduct(productData);
+        
+        // Add to view history
+        addToViewHistory(
+          productData.id,
+          productData.name,
+          productData.price,
+          productData.image
+        );
+      }
     }
   }, [id, addToViewHistory]);
 
@@ -85,10 +65,8 @@ const ProductDetail = () => {
         <Header />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">Товар не найден</h1>
-            <Button onClick={() => navigate('/catalog')} className="mt-4">
-              Вернуться в каталог
-            </Button>
+            <LoadingSpinner size="lg" />
+            <p className="mt-4 text-muted-foreground">Загрузка товара...</p>
           </div>
         </div>
         <Footer />
