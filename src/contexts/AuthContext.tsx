@@ -51,27 +51,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email: email.toLowerCase().trim(),
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName?.trim() || 'Пользователь',
+          },
         },
-      },
-    });
-    return { error };
+      });
+      
+      // Дополнительная проверка успешного создания
+      if (data?.user && !error) {
+        console.log('User created successfully:', data.user.id);
+      }
+      
+      return { error, data };
+    } catch (error: any) {
+      console.error('SignUp function error:', error);
+      return { error };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase().trim(),
+        password,
+      });
+      
+      if (data?.user && !error) {
+        console.log('User signed in successfully:', data.user.id);
+      }
+      
+      return { error, data };
+    } catch (error: any) {
+      console.error('SignIn function error:', error);
+      return { error };
+    }
   };
 
   const signOut = async () => {

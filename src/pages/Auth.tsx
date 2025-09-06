@@ -31,6 +31,7 @@ const Auth = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!loginData.email || !loginData.password) {
       toast({
         title: "Ошибка",
@@ -40,32 +41,81 @@ const Auth = () => {
       return;
     }
 
-    setIsLoading(true);
-    const { error } = await signIn(loginData.email, loginData.password);
-    
-    if (error) {
+    // Валидация email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(loginData.email)) {
       toast({
-        title: "Ошибка входа",
-        description: error.message === 'Invalid login credentials' 
-          ? "Неверный email или пароль" 
-          : error.message,
+        title: "Ошибка",
+        description: "Введите корректный email адрес",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Добро пожаловать!",
-        description: "Вы успешно вошли в систему",
-      });
+      return;
     }
-    setIsLoading(false);
+
+    setIsLoading(true);
+    
+    try {
+      const { error } = await signIn(loginData.email, loginData.password);
+      
+      if (error) {
+        console.error('Login error:', error);
+        
+        if (error.message === 'Invalid login credentials') {
+          toast({
+            title: "Ошибка входа",
+            description: "Неверный email или пароль",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('Email not confirmed')) {
+          toast({
+            title: "Email не подтвержден",
+            description: "Проверьте email и подтвердите аккаунт",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Ошибка входа",
+            description: error.message || "Произошла ошибка при входе",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Добро пожаловать!",
+          description: "Вы успешно вошли в систему",
+        });
+      }
+    } catch (error: any) {
+      console.error('Unexpected login error:', error);
+      toast({
+        title: "Неожиданная ошибка",
+        description: "Что-то пошло не так. Попробуйте еще раз",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Валидация полей
     if (!signupData.email || !signupData.password || !signupData.fullName) {
       toast({
         title: "Ошибка",
         description: "Заполните все поля",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Валидация email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(signupData.email)) {
+      toast({
+        title: "Ошибка",
+        description: "Введите корректный email адрес",
         variant: "destructive",
       });
       return;
@@ -89,30 +139,74 @@ const Auth = () => {
       return;
     }
 
+    // Проверка имени
+    if (signupData.fullName.trim().length < 2) {
+      toast({
+        title: "Ошибка",
+        description: "Имя должно содержать минимум 2 символа",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
-    const { error } = await signUp(signupData.email, signupData.password, signupData.fullName);
     
-    if (error) {
-      if (error.message.includes('already registered')) {
-        toast({
-          title: "Ошибка регистрации",
-          description: "Пользователь с таким email уже существует",
-          variant: "destructive",
-        });
+    try {
+      const { error } = await signUp(signupData.email, signupData.password, signupData.fullName.trim());
+      
+      if (error) {
+        console.error('Signup error:', error);
+        
+        // Детальная обработка ошибок
+        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+          toast({
+            title: "Ошибка регистрации",
+            description: "Пользователь с таким email уже существует",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('Database error')) {
+          toast({
+            title: "Техническая ошибка",
+            description: "Ошибка сервера. Попробуйте позже или обратитесь к администратору",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('invalid') || error.message.includes('Invalid')) {
+          toast({
+            title: "Ошибка данных",
+            description: "Проверьте правильность введенных данных",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('weak password')) {
+          toast({
+            title: "Слабый пароль",
+            description: "Пароль должен быть более сложным",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Ошибка регистрации",
+            description: error.message || "Произошла неизвестная ошибка",
+            variant: "destructive",
+          });
+        }
       } else {
+        // Очистить форму при успехе
+        setSignupData({ email: '', password: '', fullName: '', confirmPassword: '' });
         toast({
-          title: "Ошибка регистрации",
-          description: error.message,
-          variant: "destructive",
+          title: "Регистрация успешна!",
+          description: "Аккаунт создан. Добро пожаловать в MAYDON!",
         });
       }
-    } else {
+    } catch (error: any) {
+      console.error('Unexpected signup error:', error);
       toast({
-        title: "Регистрация успешна!",
-        description: "Проверьте email для подтверждения аккаунта",
+        title: "Неожиданная ошибка",
+        description: "Что-то пошло не так. Попробуйте еще раз",
+        variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   if (loading) {
