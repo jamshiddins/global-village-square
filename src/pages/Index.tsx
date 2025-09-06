@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { CategorySection } from "@/components/CategorySection";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Footer } from "@/components/Footer";
+import { DemoDataBanner } from "@/components/DemoDataBanner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      
+      {/* Demo Banner */}
+      <div className="container mx-auto px-4 pt-4">
+        <DemoDataBanner />
+      </div>
       
       {/* Quick Access Bar for Authentication */}
       {!user && (
