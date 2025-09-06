@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useNavigation } from "@/hooks/useNavigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Facebook, 
   Twitter, 
@@ -10,11 +12,14 @@ import {
   Youtube,
   Mail,
   Phone,
-  MapPin
+  MapPin,
+  Building2
 } from "lucide-react";
 
 export const Footer = () => {
+  const navigate = useNavigate();
   const { handleAction, navigateToCategory } = useNavigation();
+  const { user } = useAuth();
   const [email, setEmail] = useState("");
 
   const handleSubscribe = () => {
@@ -23,24 +28,27 @@ export const Footer = () => {
       setEmail("");
     }
   };
+  
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="text-2xl font-bold bg-hero-gradient bg-clip-text text-transparent">
-              СпецТехМаркет
+            <div className="flex items-center space-x-2">
+              <Building2 className="h-6 w-6 text-primary" />
+              <div className="text-2xl font-bold text-primary">
+                MAYDON
+              </div>
             </div>
             <p className="text-muted-foreground text-sm">
-              Надежная площадка для торговли спецтехникой. Соединяем покупателей и продавцов по всему миру.
-              Качественное оборудование по выгодным ценам.
+              Профессиональная платформа для торговли спецтехникой. Соединяем покупателей и продавцов по всему миру.
             </p>
             <div className="flex space-x-3">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8"
+                className="h-8 w-8 hover:text-primary"
                 onClick={() => handleAction("Переход в Facebook")}
               >
                 <Facebook className="h-4 w-4" />
@@ -48,7 +56,7 @@ export const Footer = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8"
+                className="h-8 w-8 hover:text-primary"
                 onClick={() => handleAction("Переход в Twitter")}
               >
                 <Twitter className="h-4 w-4" />
@@ -56,7 +64,7 @@ export const Footer = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8"
+                className="h-8 w-8 hover:text-primary"
                 onClick={() => handleAction("Переход в Instagram")}
               >
                 <Instagram className="h-4 w-4" />
@@ -64,7 +72,7 @@ export const Footer = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="h-8 w-8"
+                className="h-8 w-8 hover:text-primary"
                 onClick={() => handleAction("Переход в YouTube")}
               >
                 <Youtube className="h-4 w-4" />
@@ -74,151 +82,134 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Быстрые Ссылки</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => handleAction("О нас")}
+            <h3 className="font-semibold text-foreground">Быстрые ссылки</h3>
+            <div className="space-y-2 text-sm">
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => handleAction("О компании")}
+              >
+                О компании
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => handleAction("Новости")}
+              >
+                Новости
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => handleAction("Карьера")}
+              >
+                Карьера
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => handleAction("Партнерам")}
+              >
+                Партнерам
+              </Button>
+              {!user && (
+                <Button 
+                  variant="ghost" 
+                  className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                  onClick={() => navigate('/auth')}
                 >
-                  О Нас
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => handleAction("Продавать на платформе")}
+                  Вход / Регистрация
+                </Button>
+              )}
+              {user && (
+                <Button 
+                  variant="ghost" 
+                  className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                  onClick={() => navigate('/profile')}
                 >
-                  Продавать на СпецТехМаркет
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => handleAction("Защита покупателей")}
-                >
-                  Защита Покупателей
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => handleAction("Центр помощи")}
-                >
-                  Центр Помощи
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => handleAction("Информация о доставке")}
-                >
-                  Доставка
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => handleAction("Возврат товаров")}
-                >
-                  Возврат
-                </button>
-              </li>
-            </ul>
+                  Мой кабинет
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Categories */}
           <div className="space-y-4">
             <h3 className="font-semibold text-foreground">Категории</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => navigateToCategory("Экскаваторы")}
-                >
-                  Экскаваторы
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => navigateToCategory("Автокраны")}
-                >
-                  Автокраны
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => navigateToCategory("Грузовики")}
-                >
-                  Грузовики
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => navigateToCategory("Погрузчики")}
-                >
-                  Погрузчики
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => navigateToCategory("Инструменты")}
-                >
-                  Инструменты
-                </button>
-              </li>
-              <li>
-                <button 
-                  className="hover:text-primary transition-colors text-left"
-                  onClick={() => navigateToCategory("Сервис")}
-                >
-                  Сервисное Обслуживание
-                </button>
-              </li>
-            </ul>
+            <div className="space-y-2 text-sm">
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => navigateToCategory("Экскаваторы")}
+              >
+                Экскаваторы
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => navigateToCategory("Автокраны")}
+              >
+                Автокраны
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => navigateToCategory("Грузовики")}
+              >
+                Грузовики
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => navigateToCategory("Погрузчики")}
+              >
+                Погрузчики
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="h-auto p-0 text-muted-foreground hover:text-primary justify-start"
+                onClick={() => navigateToCategory("Инструменты")}
+              >
+                Инструменты
+              </Button>
+            </div>
           </div>
 
           {/* Contact & Newsletter */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Оставайтесь на связи</h3>
-            
-            {/* Contact Info */}
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <span>support@spetehmarket.ru</span>
+            <h3 className="font-semibold text-foreground">Контакты</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center space-x-2 text-muted-foreground">
+                <Mail className="h-4 w-4 text-primary" />
+                <span>info@maydon.ru</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span>+7 (800) 555-12-34</span>
+              <div className="flex items-center space-x-2 text-muted-foreground">
+                <Phone className="h-4 w-4 text-primary" />
+                <span>+7 (495) 123-45-67</span>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>Москва, ул. Промышленная, д. 123</span>
+              <div className="flex items-center space-x-2 text-muted-foreground">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span>Москва, Россия</span>
               </div>
             </div>
-
-            {/* Newsletter */}
+            
+            <Separator className="my-4" />
+            
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">
-                Подпишитесь на новости и специальные предложения
-              </p>
-              <div className="flex gap-2">
-                <Input 
-                  type="email" 
-                  placeholder="Введите ваш email"
-                  className="text-sm"
+              <h4 className="font-semibold text-sm text-foreground">Новости и обновления</h4>
+              <div className="flex space-x-2">
+                <Input
+                  type="email"
+                  placeholder="Ваш email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="bg-input border-border"
                 />
                 <Button 
-                  variant="default" 
+                  variant="default"
                   size="sm"
                   onClick={handleSubscribe}
+                  className="bg-primary hover:bg-primary/90"
                 >
                   Подписаться
                 </Button>
@@ -230,29 +221,32 @@ export const Footer = () => {
         <Separator className="my-8" />
 
         {/* Bottom section */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex flex-wrap gap-4">
-            <span>© 2024 СпецТехМаркет. Все права защищены.</span>
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <div className="text-sm text-muted-foreground">
+            © 2025 MAYDON. Все права защищены.
           </div>
-          <div className="flex flex-wrap gap-4">
-            <button 
-              className="hover:text-primary transition-colors"
+          <div className="flex space-x-6 text-sm">
+            <Button 
+              variant="ghost" 
+              className="h-auto p-0 text-muted-foreground hover:text-primary"
               onClick={() => handleAction("Политика конфиденциальности")}
             >
-              Политика Конфиденциальности
-            </button>
-            <button 
-              className="hover:text-primary transition-colors"
-              onClick={() => handleAction("Пользовательское соглашение")}
+              Политика конфиденциальности
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="h-auto p-0 text-muted-foreground hover:text-primary"
+              onClick={() => handleAction("Условия использования")}
             >
-              Пользовательское Соглашение
-            </button>
-            <button 
-              className="hover:text-primary transition-colors"
-              onClick={() => handleAction("Политика cookies")}
+              Условия использования
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="h-auto p-0 text-muted-foreground hover:text-primary"
+              onClick={() => handleAction("Поддержка")}
             >
-              Политика Cookie
-            </button>
+              Поддержка
+            </Button>
           </div>
         </div>
       </div>

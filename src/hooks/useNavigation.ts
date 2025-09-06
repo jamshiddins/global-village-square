@@ -5,25 +5,19 @@ export const useNavigation = () => {
   const { toast } = useToast();
 
   const navigateToCategory = useCallback((categoryId: string) => {
-    toast({
-      title: "Навигация",
-      description: `Переход в категорию: ${categoryId}`,
-    });
-  }, [toast]);
+    window.location.href = `/catalog?category=${encodeURIComponent(categoryId)}`;
+  }, []);
 
   const navigateToProduct = useCallback((productId: string) => {
     toast({
       title: "Продукт",
-      description: `Открытие товара ID: ${productId}`,
+      description: `Открытие товара: ${productId}`,
     });
   }, [toast]);
 
   const navigateToCatalog = useCallback(() => {
-    toast({
-      title: "Каталог",
-      description: "Открытие полного каталога",
-    });
-  }, [toast]);
+    window.location.href = '/catalog';
+  }, []);
 
   const handleAction = useCallback((action: string) => {
     toast({

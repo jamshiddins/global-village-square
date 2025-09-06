@@ -1,9 +1,10 @@
-import { Star, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigation } from "@/hooks/useNavigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
+import { Star, Heart, ShoppingCart, Eye } from "lucide-react";
 
 interface ProductCardProps {
   id: string;
@@ -29,29 +30,50 @@ export const ProductCard = ({
   isWishlisted = false,
 }: ProductCardProps) => {
   const { navigateToProduct, handleAction } = useNavigation();
+  const { user } = useAuth();
   const [isInWishlist, setIsInWishlist] = useState(isWishlisted);
+  const [isHovered, setIsHovered] = useState(false);
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!user) {
+      handleAction("Войдите, чтобы добавлять в избранное");
+      return;
+    }
     setIsInWishlist(!isInWishlist);
     handleAction(isInWishlist ? "Удалено из избранного" : "Добавлено в избранное");
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!user) {
+      handleAction("Войдите, чтобы добавлять в корзину");
+      return;
+    }
     handleAction("Товар добавлен в корзину");
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!user) {
+      handleAction("Войдите для покупки");
+      return;
+    }
     handleAction("Переход к оформлению покупки");
+  };
+
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleAction("Быстрый просмотр товара");
   };
 
   return (
     <Card 
-      className="group bg-product-card border-border hover:border-primary/20 hover:bg-product-hover transition-all duration-300 hover:shadow-product cursor-pointer overflow-hidden"
+      className="group bg-product-card border-border hover:border-primary/20 hover:bg-product-hover transition-all duration-300 hover:shadow-product cursor-pointer overflow-hidden animate-fade-in"
       onClick={() => navigateToProduct(id)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <CardContent className="p-0">
         {/* Image container */}
@@ -65,35 +87,46 @@ export const ProductCard = ({
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {badge && (
-              <Badge variant="destructive" className="text-xs font-semibold">
+              <Badge variant="destructive" className="text-xs font-semibold animate-scale-in">
                 {badge}
               </Badge>
             )}
             {discount > 0 && (
-              <Badge variant="secondary" className="text-xs font-semibold bg-accent">
+              <Badge variant="secondary" className="text-xs font-semibold bg-accent animate-scale-in">
                 -{discount}%
               </Badge>
             )}
           </div>
 
-          {/* Wishlist button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 right-2 h-8 w-8 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            onClick={handleWishlistToggle}
-          >
-            <Heart 
-              className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
-            />
-          </Button>
+          {/* Action buttons */}
+          <div className="absolute top-2 right-2 flex flex-col gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
+              onClick={handleWishlistToggle}
+            >
+              <Heart 
+                className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
+              />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
+              onClick={handleQuickView}
+            >
+              <Eye className="h-4 w-4 text-gray-600" />
+            </Button>
+          </div>
 
           {/* Quick add to cart */}
-          <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
             <Button 
               variant="cart" 
               size="sm" 
-              className="w-full"
+              className="w-full animate-slide-in-right"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
@@ -110,7 +143,7 @@ export const ProductCard = ({
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-4 w-4 ${
+                  className={`h-4 w-4 transition-colors duration-200 ${
                     i < Math.floor(rating) 
                       ? 'text-rating fill-current' 
                       : 'text-gray-300'
@@ -142,10 +175,10 @@ export const ProductCard = ({
           <Button 
             variant="buy" 
             size="sm" 
-            className="w-full"
+            className={`w-full transition-all duration-300 ${isHovered ? 'animate-pulse-glow' : ''}`}
             onClick={handleBuyNow}
           >
-            Купить Сейчас
+            {user ? "Купить Сейчас" : "Войти для покупки"}
           </Button>
         </div>
       </CardContent>

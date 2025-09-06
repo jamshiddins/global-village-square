@@ -58,12 +58,12 @@ export default {
 				'rating': 'hsl(var(--rating-color))',
 				'badge-success': 'hsl(var(--badge-success))',
 				'badge-warning': 'hsl(var(--badge-warning))',
-				'dashboard-card': 'hsl(var(--dashboard-card))',
-				'dashboard-card-hover': 'hsl(var(--dashboard-card-hover))',
-				'stats-positive': 'hsl(var(--stats-positive))',
-				'stats-negative': 'hsl(var(--stats-negative))',
-				'stats-neutral': 'hsl(var(--stats-neutral))',
-				'maydon-yellow': 'hsl(var(--maydon-yellow))',
+        'dashboard-card': 'hsl(var(--dashboard-card))',
+        'dashboard-card-hover': 'hsl(var(--dashboard-card-hover))',
+        'stats-positive': 'hsl(var(--stats-positive))',
+        'stats-negative': 'hsl(var(--stats-negative))',
+        'stats-neutral': 'hsl(var(--stats-neutral))',
+        'maydon-yellow': 'hsl(var(--maydon-yellow))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -80,52 +80,79 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
-			backgroundImage: {
-				'hero-gradient': 'var(--hero-gradient)',
-				'maydon-gradient': 'var(--maydon-gradient)',
-			},
-			boxShadow: {
-				'sm': 'var(--shadow-sm)',
-				'md': 'var(--shadow-md)',
-				'lg': 'var(--shadow-lg)',
-				'product': 'var(--shadow-product)',
-			},
-			transitionProperty: {
-				'smooth': 'var(--transition-smooth)',
-				'bounce': 'var(--transition-bounce)',
-			},
-			keyframes: {
-				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
-				},
-				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
-				},
-				'float': {
-					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' },
-				},
-				'pulse-glow': {
-					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.5' },
-				}
-			},
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'float': 'float 3s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-			}
+      backgroundImage: {
+        'hero-gradient': 'var(--hero-gradient)',
+        'maydon-gradient': 'var(--maydon-gradient)',
+      },
+      boxShadow: {
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'product': 'var(--shadow-product)',
+      },
+      transitionProperty: {
+        'smooth': 'var(--transition-smooth)',
+        'bounce': 'var(--transition-bounce)',
+      },
+      keyframes: {
+        'accordion-down': {
+          from: {
+            height: '0'
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)'
+          }
+        },
+        'accordion-up': {
+          from: {
+            height: 'var(--radix-accordion-content-height)'
+          },
+          to: {
+            height: '0'
+          }
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+        },
+        'fade-in': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(10px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        'scale-in': {
+          '0%': {
+            transform: 'scale(0.95)',
+            opacity: '0'
+          },
+          '100%': {
+            transform: 'scale(1)',
+            opacity: '1'
+          }
+        },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' }
+        }
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'float': 'float 3s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+        'fade-in': 'fade-in 0.3s ease-out',
+        'scale-in': 'scale-in 0.2s ease-out',
+        'slide-in-right': 'slide-in-right 0.3s ease-out',
+      }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
