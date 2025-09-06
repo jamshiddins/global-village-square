@@ -2,6 +2,8 @@ import { Star, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigation } from "@/hooks/useNavigation";
+import { useState } from "react";
 
 interface ProductCardProps {
   id: string;
@@ -26,10 +28,31 @@ export const ProductCard = ({
   badge,
   isWishlisted = false,
 }: ProductCardProps) => {
+  const { navigateToProduct, handleAction } = useNavigation();
+  const [isInWishlist, setIsInWishlist] = useState(isWishlisted);
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
 
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsInWishlist(!isInWishlist);
+    handleAction(isInWishlist ? "Удалено из избранного" : "Добавлено в избранное");
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleAction("Товар добавлен в корзину");
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleAction("Переход к оформлению покупки");
+  };
+
   return (
-    <Card className="group bg-product-card border-border hover:border-primary/20 hover:bg-product-hover transition-all duration-300 hover:shadow-product cursor-pointer overflow-hidden">
+    <Card 
+      className="group bg-product-card border-border hover:border-primary/20 hover:bg-product-hover transition-all duration-300 hover:shadow-product cursor-pointer overflow-hidden"
+      onClick={() => navigateToProduct(id)}
+    >
       <CardContent className="p-0">
         {/* Image container */}
         <div className="relative overflow-hidden">
@@ -58,15 +81,21 @@ export const ProductCard = ({
             variant="ghost"
             size="icon"
             className="absolute top-2 right-2 h-8 w-8 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={handleWishlistToggle}
           >
             <Heart 
-              className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
+              className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
             />
           </Button>
 
           {/* Quick add to cart */}
           <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Button variant="cart" size="sm" className="w-full">
+            <Button 
+              variant="cart" 
+              size="sm" 
+              className="w-full"
+              onClick={handleAddToCart}
+            >
               <ShoppingCart className="h-4 w-4 mr-2" />
               В Корзину
             </Button>
@@ -110,7 +139,12 @@ export const ProductCard = ({
           </div>
 
           {/* Buy now button */}
-          <Button variant="buy" size="sm" className="w-full">
+          <Button 
+            variant="buy" 
+            size="sm" 
+            className="w-full"
+            onClick={handleBuyNow}
+          >
             Купить Сейчас
           </Button>
         </div>

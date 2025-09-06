@@ -1,5 +1,6 @@
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
+import { useNavigation } from "@/hooks/useNavigation";
 import headphonesImg from "@/assets/product-headphones.jpg";
 import phoneImg from "@/assets/product-phone.jpg";
 import shoesImg from "@/assets/product-shoes.jpg";
@@ -83,6 +84,7 @@ const sampleProducts = [
 ];
 
 export const ProductGrid = () => {
+  const { navigateToCatalog } = useNavigation();
   return (
     <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
@@ -102,7 +104,11 @@ export const ProductGrid = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
+          <Button 
+            variant="outline" 
+            size="lg"
+            onClick={() => navigateToCatalog()}
+          >
             Весь Каталог Техники
           </Button>
         </div>

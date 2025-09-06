@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigation } from "@/hooks/useNavigation";
 import { 
   Construction, 
   Truck, 
@@ -79,6 +80,7 @@ const categories = [
 ];
 
 export const CategorySection = () => {
+  const { navigateToCategory, navigateToCatalog } = useNavigation();
   return (
     <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -96,6 +98,7 @@ export const CategorySection = () => {
             <Card 
               key={category.id}
               className="group cursor-pointer border-border hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-card hover:bg-product-hover"
+              onClick={() => navigateToCategory(category.name)}
             >
               <CardContent className="p-6 text-center space-y-4">
                 <div className={`${category.bgColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300`}>
@@ -116,7 +119,11 @@ export const CategorySection = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="hero" size="lg">
+          <Button 
+            variant="hero" 
+            size="lg"
+            onClick={() => navigateToCatalog()}
+          >
             Посмотреть Все Категории
           </Button>
         </div>

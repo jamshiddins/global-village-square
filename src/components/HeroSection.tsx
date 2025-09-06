@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ShoppingBag, Truck, Shield, Star } from "lucide-react";
+import { useNavigation } from "@/hooks/useNavigation";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 export const HeroSection = () => {
+  const { navigateToCatalog, handleAction } = useNavigation();
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-background to-muted">
       <div className="container mx-auto px-4 py-16">
@@ -23,11 +25,20 @@ export const HeroSection = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="hero" size="xl" className="group">
+              <Button 
+                variant="hero" 
+                size="xl" 
+                className="group"
+                onClick={() => navigateToCatalog()}
+              >
                 Смотреть Каталог
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button variant="outline" size="xl">
+              <Button 
+                variant="outline" 
+                size="xl"
+                onClick={() => handleAction("Стать поставщиком")}
+              >
                 Стать Поставщиком
               </Button>
             </div>

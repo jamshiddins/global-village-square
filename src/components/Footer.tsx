@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useNavigation } from "@/hooks/useNavigation";
+import { useState } from "react";
 import { 
   Facebook, 
   Twitter, 
@@ -12,6 +14,15 @@ import {
 } from "lucide-react";
 
 export const Footer = () => {
+  const { handleAction, navigateToCategory } = useNavigation();
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = () => {
+    if (email.trim()) {
+      handleAction(`Подписка оформлена: ${email}`);
+      setEmail("");
+    }
+  };
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-16">
@@ -19,23 +30,43 @@ export const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="text-2xl font-bold bg-hero-gradient bg-clip-text text-transparent">
-              MarketPlace
+              СпецТехМаркет
             </div>
             <p className="text-muted-foreground text-sm">
-              Your trusted global marketplace connecting buyers and sellers worldwide. 
-              Discover quality products at unbeatable prices.
+              Надежная площадка для торговли спецтехникой. Соединяем покупателей и продавцов по всему миру.
+              Качественное оборудование по выгодным ценам.
             </p>
             <div className="flex space-x-3">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => handleAction("Переход в Facebook")}
+              >
                 <Facebook className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => handleAction("Переход в Twitter")}
+              >
                 <Twitter className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => handleAction("Переход в Instagram")}
+              >
                 <Instagram className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => handleAction("Переход в YouTube")}
+              >
                 <Youtube className="h-4 w-4" />
               </Button>
             </div>
@@ -43,63 +74,153 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Quick Links</h3>
+            <h3 className="font-semibold text-foreground">Быстрые Ссылки</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Sell on MarketPlace</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Buyer Protection</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Returns</a></li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => handleAction("О нас")}
+                >
+                  О Нас
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => handleAction("Продавать на платформе")}
+                >
+                  Продавать на СпецТехМаркет
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => handleAction("Защита покупателей")}
+                >
+                  Защита Покупателей
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => handleAction("Центр помощи")}
+                >
+                  Центр Помощи
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => handleAction("Информация о доставке")}
+                >
+                  Доставка
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => handleAction("Возврат товаров")}
+                >
+                  Возврат
+                </button>
+              </li>
             </ul>
           </div>
 
           {/* Categories */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Categories</h3>
+            <h3 className="font-semibold text-foreground">Категории</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Electronics</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Fashion</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Home & Garden</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Sports</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Beauty</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Books</a></li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => navigateToCategory("Экскаваторы")}
+                >
+                  Экскаваторы
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => navigateToCategory("Автокраны")}
+                >
+                  Автокраны
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => navigateToCategory("Грузовики")}
+                >
+                  Грузовики
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => navigateToCategory("Погрузчики")}
+                >
+                  Погрузчики
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => navigateToCategory("Инструменты")}
+                >
+                  Инструменты
+                </button>
+              </li>
+              <li>
+                <button 
+                  className="hover:text-primary transition-colors text-left"
+                  onClick={() => navigateToCategory("Сервис")}
+                >
+                  Сервисное Обслуживание
+                </button>
+              </li>
             </ul>
           </div>
 
           {/* Contact & Newsletter */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Stay Connected</h3>
+            <h3 className="font-semibold text-foreground">Оставайтесь на связи</h3>
             
             {/* Contact Info */}
             <div className="space-y-3 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <span>support@marketplace.com</span>
+                <span>support@spetehmarket.ru</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+7 (800) 555-12-34</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                <span>123 Commerce St, Business City</span>
+                <span>Москва, ул. Промышленная, д. 123</span>
               </div>
             </div>
 
             {/* Newsletter */}
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                Subscribe to get special offers and updates
+                Подпишитесь на новости и специальные предложения
               </p>
               <div className="flex gap-2">
                 <Input 
                   type="email" 
-                  placeholder="Enter your email"
+                  placeholder="Введите ваш email"
                   className="text-sm"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
-                <Button variant="default" size="sm">
-                  Subscribe
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={handleSubscribe}
+                >
+                  Подписаться
                 </Button>
               </div>
             </div>
@@ -111,12 +232,27 @@ export const Footer = () => {
         {/* Bottom section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <div className="flex flex-wrap gap-4">
-            <span>© 2024 MarketPlace. All rights reserved.</span>
+            <span>© 2024 СпецТехМаркет. Все права защищены.</span>
           </div>
           <div className="flex flex-wrap gap-4">
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-primary transition-colors">Cookie Policy</a>
+            <button 
+              className="hover:text-primary transition-colors"
+              onClick={() => handleAction("Политика конфиденциальности")}
+            >
+              Политика Конфиденциальности
+            </button>
+            <button 
+              className="hover:text-primary transition-colors"
+              onClick={() => handleAction("Пользовательское соглашение")}
+            >
+              Пользовательское Соглашение
+            </button>
+            <button 
+              className="hover:text-primary transition-colors"
+              onClick={() => handleAction("Политика cookies")}
+            >
+              Политика Cookie
+            </button>
           </div>
         </div>
       </div>
