@@ -58,6 +58,12 @@ export default {
 				'rating': 'hsl(var(--rating-color))',
 				'badge-success': 'hsl(var(--badge-success))',
 				'badge-warning': 'hsl(var(--badge-warning))',
+				'dashboard-card': 'hsl(var(--dashboard-card))',
+				'dashboard-card-hover': 'hsl(var(--dashboard-card-hover))',
+				'stats-positive': 'hsl(var(--stats-positive))',
+				'stats-negative': 'hsl(var(--stats-negative))',
+				'stats-neutral': 'hsl(var(--stats-neutral))',
+				'maydon-yellow': 'hsl(var(--maydon-yellow))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -76,6 +82,7 @@ export default {
 			},
 			backgroundImage: {
 				'hero-gradient': 'var(--hero-gradient)',
+				'maydon-gradient': 'var(--maydon-gradient)',
 			},
 			boxShadow: {
 				'sm': 'var(--shadow-sm)',

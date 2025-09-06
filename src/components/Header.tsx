@@ -1,12 +1,17 @@
-import { Search, ShoppingCart, User, Menu, Heart } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, Heart, LogOut, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigation } from "@/hooks/useNavigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
+  const navigate = useNavigate();
   const { handleAction, navigateToCategory } = useNavigation();
+  const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [cartItems] = useState(3);
 
@@ -20,6 +25,11 @@ export const Header = () => {
     if (e.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -36,8 +46,11 @@ export const Header = () => {
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <div className="text-2xl font-bold bg-hero-gradient bg-clip-text text-transparent">
-              СпецТехМаркет
+            <div className="flex items-center space-x-2">
+              <Building2 className="h-6 w-6 text-primary" />
+              <div className="text-2xl font-bold text-primary">
+                MAYDON
+              </div>
             </div>
           </div>
 
@@ -89,15 +102,41 @@ export const Header = () => {
               </Badge>
             </Button>
             
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="hidden md:flex"
-              onClick={() => handleAction("Вход в аккаунт")}
-            >
-              <User className="h-4 w-4 mr-2" />
-              Войти
-            </Button>
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/profile')}
+                  className="flex items-center space-x-2"
+                >
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                      {user.email?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="hidden md:inline">Профиль</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleSignOut}
+                  title="Выйти"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/auth')}
+                className="hidden md:flex"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Войти
+              </Button>
+            )}
           </div>
         </div>
 
