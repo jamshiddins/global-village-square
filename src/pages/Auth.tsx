@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Building2 } from 'lucide-react';
+import { Loader2, Building2, AlertCircle } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -34,19 +34,8 @@ const Auth = () => {
     
     if (!loginData.email || !loginData.password) {
       toast({
-        title: "Ошибка",
+        title: "Ошибка валидации",
         description: "Заполните все поля",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Валидация email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(loginData.email)) {
-      toast({
-        title: "Ошибка",
-        description: "Введите корректный email адрес",
         variant: "destructive",
       });
       return;
@@ -60,36 +49,34 @@ const Auth = () => {
       if (error) {
         console.error('Login error:', error);
         
-        if (error.message === 'Invalid login credentials') {
-          toast({
-            title: "Ошибка входа",
-            description: "Неверный email или пароль",
-            variant: "destructive",
-          });
+        let errorMessage = "Произошла ошибка при входе";
+        
+        if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid credentials')) {
+          errorMessage = "Неверный email или пароль";
         } else if (error.message.includes('Email not confirmed')) {
-          toast({
-            title: "Email не подтвержден",
-            description: "Проверьте email и подтвердите аккаунт",
-            variant: "destructive",
-          });
+          errorMessage = "Подтвердите email перед входом";
+        } else if (error.message.includes('Too many requests')) {
+          errorMessage = "Слишком много попыток входа. Попробуйте позже";
         } else {
-          toast({
-            title: "Ошибка входа",
-            description: error.message || "Произошла ошибка при входе",
-            variant: "destructive",
-          });
+          errorMessage = error.message || "Неизвестная ошибка";
         }
+        
+        toast({
+          title: "Ошибка входа",
+          description: errorMessage,
+          variant: "destructive",
+        });
       } else {
         toast({
           title: "Добро пожаловать!",
           description: "Вы успешно вошли в систему",
         });
       }
-    } catch (error: any) {
-      console.error('Unexpected login error:', error);
+    } catch (err) {
+      console.error('Unexpected login error:', err);
       toast({
-        title: "Неожиданная ошибка",
-        description: "Что-то пошло не так. Попробуйте еще раз",
+        title: "Ошибка входа",
+        description: "Произошла непредвиденная ошибка. Попробуйте позже",
         variant: "destructive",
       });
     } finally {
@@ -100,22 +87,11 @@ const Auth = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Валидация полей
+    // Validation
     if (!signupData.email || !signupData.password || !signupData.fullName) {
       toast({
-        title: "Ошибка",
-        description: "Заполните все поля",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Валидация email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(signupData.email)) {
-      toast({
-        title: "Ошибка",
-        description: "Введите корректный email адрес",
+        title: "Ошибка валидации",
+        description: "Заполните все обязательные поля",
         variant: "destructive",
       });
       return;
@@ -123,7 +99,7 @@ const Auth = () => {
 
     if (signupData.password !== signupData.confirmPassword) {
       toast({
-        title: "Ошибка",
+        title: "Ошибка валидации",
         description: "Пароли не совпадают",
         variant: "destructive",
       });
@@ -132,18 +108,19 @@ const Auth = () => {
 
     if (signupData.password.length < 6) {
       toast({
-        title: "Ошибка",
+        title: "Ошибка валидации",
         description: "Пароль должен содержать минимум 6 символов",
         variant: "destructive",
       });
       return;
     }
 
-    // Проверка имени
-    if (signupData.fullName.trim().length < 2) {
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(signupData.email)) {
       toast({
-        title: "Ошибка",
-        description: "Имя должно содержать минимум 2 символа",
+        title: "Ошибка валидации",
+        description: "Введите корректный email адрес",
         variant: "destructive",
       });
       return;
@@ -152,56 +129,46 @@ const Auth = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await signUp(signupData.email, signupData.password, signupData.fullName.trim());
+      const { error } = await signUp(signupData.email, signupData.password, signupData.fullName);
       
       if (error) {
         console.error('Signup error:', error);
         
-        // Детальная обработка ошибок
-        if (error.message.includes('already registered') || error.message.includes('already exists')) {
-          toast({
-            title: "Ошибка регистрации",
-            description: "Пользователь с таким email уже существует",
-            variant: "destructive",
-          });
-        } else if (error.message.includes('Database error')) {
-          toast({
-            title: "Техническая ошибка",
-            description: "Ошибка сервера. Попробуйте позже или обратитесь к администратору",
-            variant: "destructive",
-          });
-        } else if (error.message.includes('invalid') || error.message.includes('Invalid')) {
-          toast({
-            title: "Ошибка данных",
-            description: "Проверьте правильность введенных данных",
-            variant: "destructive",
-          });
-        } else if (error.message.includes('weak password')) {
-          toast({
-            title: "Слабый пароль",
-            description: "Пароль должен быть более сложным",
-            variant: "destructive",
-          });
+        let errorMessage = "Произошла ошибка при регистрации";
+        
+        if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+          errorMessage = "Пользователь с таким email уже существует";
+        } else if (error.message.includes('Password should be at least')) {
+          errorMessage = "Пароль слишком короткий";
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = "Некорректный email адрес";
+        } else if (error.message.includes('Database error') || error.message.includes('unexpected_failure')) {
+          errorMessage = "Ошибка сервера. Попробуйте позже или обратитесь в поддержку";
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = "Проверьте email и подтвердите регистрацию";
         } else {
-          toast({
-            title: "Ошибка регистрации",
-            description: error.message || "Произошла неизвестная ошибка",
-            variant: "destructive",
-          });
+          errorMessage = error.message || "Неизвестная ошибка";
         }
+        
+        toast({
+          title: "Ошибка регистрации",
+          description: errorMessage,
+          variant: "destructive",
+        });
       } else {
-        // Очистить форму при успехе
+        // Clear form on success
         setSignupData({ email: '', password: '', fullName: '', confirmPassword: '' });
+        
         toast({
           title: "Регистрация успешна!",
-          description: "Аккаунт создан. Добро пожаловать в MAYDON!",
+          description: "Проверьте email для подтверждения аккаунта",
         });
       }
-    } catch (error: any) {
-      console.error('Unexpected signup error:', error);
+    } catch (err) {
+      console.error('Unexpected signup error:', err);
       toast({
-        title: "Неожиданная ошибка",
-        description: "Что-то пошло не так. Попробуйте еще раз",
+        title: "Ошибка регистрации",
+        description: "Произошла непредвиденная ошибка. Попробуйте позже",
         variant: "destructive",
       });
     } finally {
@@ -253,6 +220,7 @@ const Auth = () => {
                       value={loginData.email}
                       onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                       className="bg-input border-border"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -264,6 +232,7 @@ const Auth = () => {
                       value={loginData.password}
                       onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                       className="bg-input border-border"
+                      required
                     />
                   </div>
                   <Button 
@@ -288,7 +257,7 @@ const Auth = () => {
               <CardContent>
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">Полное имя</Label>
+                    <Label htmlFor="signup-name">Полное имя *</Label>
                     <Input
                       id="signup-name"
                       type="text"
@@ -296,10 +265,11 @@ const Auth = () => {
                       value={signupData.fullName}
                       onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
                       className="bg-input border-border"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">Email *</Label>
                     <Input
                       id="signup-email"
                       type="email"
@@ -307,10 +277,11 @@ const Auth = () => {
                       value={signupData.email}
                       onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                       className="bg-input border-border"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Пароль</Label>
+                    <Label htmlFor="signup-password">Пароль * (минимум 6 символов)</Label>
                     <Input
                       id="signup-password"
                       type="password"
@@ -318,10 +289,12 @@ const Auth = () => {
                       value={signupData.password}
                       onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                       className="bg-input border-border"
+                      minLength={6}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Подтвердите пароль</Label>
+                    <Label htmlFor="confirm-password">Подтвердите пароль *</Label>
                     <Input
                       id="confirm-password"
                       type="password"
@@ -329,8 +302,23 @@ const Auth = () => {
                       value={signupData.confirmPassword}
                       onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
                       className="bg-input border-border"
+                      required
                     />
                   </div>
+                  
+                  <div className="flex items-start space-x-2 text-xs text-muted-foreground bg-muted/30 p-3 rounded-md mt-3">
+                    <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium mb-1">Требования к регистрации:</p>
+                      <ul className="space-y-1">
+                        <li>• Заполните все обязательные поля (*)</li>
+                        <li>• Пароль минимум 6 символов</li>
+                        <li>• Используйте действующий email адрес</li>
+                        <li>• Подтвердите email после регистрации</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
                   <Button 
                     type="submit" 
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
@@ -344,6 +332,23 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
         </Card>
+
+        {/* Additional help */}
+        <div className="text-center mt-6 text-sm text-muted-foreground">
+          <p>
+            Проблемы с входом? {" "}
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-primary hover:text-primary/80"
+              onClick={() => toast({
+                title: "Поддержка",
+                description: "Обратитесь в поддержку: support@maydon.ru",
+              })}
+            >
+              Обратитесь в поддержку
+            </Button>
+          </p>
+        </div>
       </div>
     </div>
   );
