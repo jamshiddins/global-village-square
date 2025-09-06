@@ -5,15 +5,16 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigation } from "@/hooks/useNavigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/hooks/useCart";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const navigate = useNavigate();
-  const { handleAction, navigateToCategory } = useNavigation();
+  const { handleAction, navigateToCategory, navigateToCart, navigateToWishlist } = useNavigation();
   const { user, signOut } = useAuth();
+  const { totalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartItems] = useState(3);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -82,7 +83,7 @@ export const Header = () => {
               variant="ghost" 
               size="icon" 
               className="hidden md:flex"
-              onClick={() => handleAction("Избранное")}
+              onClick={navigateToWishlist}
             >
               <Heart className="h-5 w-5" />
             </Button>
@@ -91,15 +92,17 @@ export const Header = () => {
               variant="ghost" 
               size="icon" 
               className="relative"
-              onClick={() => handleAction("Корзина")}
+              onClick={navigateToCart}
             >
               <ShoppingCart className="h-5 w-5" />
-              <Badge 
-                variant="destructive" 
-                className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
-              >
-                {cartItems}
-              </Badge>
+              {totalItems > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                >
+                  {totalItems}
+                </Badge>
+              )}
             </Button>
             
             {user ? (

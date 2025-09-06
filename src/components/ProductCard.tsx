@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigation } from "@/hooks/useNavigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { useState } from "react";
 import { Star, Heart, ShoppingCart, Eye } from "lucide-react";
 
@@ -31,9 +33,12 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   const { navigateToProduct, handleAction } = useNavigation();
   const { user } = useAuth();
-  const [isInWishlist, setIsInWishlist] = useState(isWishlisted);
+  const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+  
+  const wishlisted = isInWishlist(id);
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -41,17 +46,21 @@ export const ProductCard = ({
       handleAction("Войдите, чтобы добавлять в избранное");
       return;
     }
-    setIsInWishlist(!isInWishlist);
-    handleAction(isInWishlist ? "Удалено из избранного" : "Добавлено в избранное");
+    
+    if (wishlisted) {
+      removeFromWishlist(id);
+    } else {
+      addToWishlist(id, name, price, image);
+    }
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
       handleAction("Войдите, чтобы добавлять в корзину");
       return;
     }
-    handleAction("Товар добавлен в корзину");
+    addToCart(id, name, price, image);
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
@@ -107,7 +116,7 @@ export const ProductCard = ({
               onClick={handleWishlistToggle}
             >
               <Heart 
-                className={`h-4 w-4 ${isInWishlist ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
+                className={`h-4 w-4 ${wishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
               />
             </Button>
             
@@ -127,7 +136,7 @@ export const ProductCard = ({
               variant="cart" 
               size="sm" 
               className="w-full animate-slide-in-right"
-              onClick={handleAddToCart}
+              onClick={handleAddToCartClick}
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
               В Корзину

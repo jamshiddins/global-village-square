@@ -1,28 +1,35 @@
 import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export const useNavigation = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const navigateToCategory = useCallback((categoryId: string) => {
-    window.location.href = `/catalog?category=${encodeURIComponent(categoryId)}`;
-  }, []);
+    navigate(`/catalog?category=${encodeURIComponent(categoryId)}`);
+  }, [navigate]);
 
   const navigateToProduct = useCallback((productId: string) => {
-    toast({
-      title: "Продукт",
-      description: `Открытие товара: ${productId}`,
-    });
-  }, [toast]);
+    navigate(`/product/${productId}`);
+  }, [navigate]);
 
   const navigateToCatalog = useCallback(() => {
-    window.location.href = '/catalog';
-  }, []);
+    navigate('/catalog');
+  }, [navigate]);
+
+  const navigateToCart = useCallback(() => {
+    navigate('/cart');
+  }, [navigate]);
+
+  const navigateToWishlist = useCallback(() => {
+    navigate('/wishlist');
+  }, [navigate]);
 
   const handleAction = useCallback((action: string) => {
     toast({
       title: "Действие",
-      description: `Выполнение: ${action}`,
+      description: action,
     });
   }, [toast]);
 
@@ -30,6 +37,8 @@ export const useNavigation = () => {
     navigateToCategory,
     navigateToProduct,
     navigateToCatalog,
+    navigateToCart,
+    navigateToWishlist,
     handleAction,
   };
 };
