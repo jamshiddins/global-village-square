@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -15,8 +16,13 @@ import {
   List,
   Building2,
   User,
-  LogIn
+  LogIn,
+  SlidersHorizontal
 } from 'lucide-react';
+import headphonesImg from "@/assets/product-headphones.jpg";
+import phoneImg from "@/assets/product-phone.jpg";
+import shoesImg from "@/assets/product-shoes.jpg";
+import laptopImg from "@/assets/product-laptop.jpg";
 
 // Mock data for catalog
 const catalogProducts = [
@@ -27,46 +33,110 @@ const catalogProducts = [
     originalPrice: 3200000,
     rating: 4.8,
     reviews: 127,
-    image: "/src/assets/product-headphones.jpg",
+    image: headphonesImg,
     badge: "Хит Продаж",
-    category: "Экскаваторы"
+    category: "excavators"
   },
   {
-    id: "2",
+    id: "2", 
     name: "Автокран LIEBHERR 50 тонн - Мобильный, телескопический",
     price: 4500000,
     originalPrice: 5000000,
     rating: 4.9,
     reviews: 89,
-    image: "/src/assets/product-phone.jpg",
+    image: phoneImg,
     badge: "Новинка",
-    category: "Автокраны"
+    category: "cranes"
   },
-  // Add more products...
+  {
+    id: "3",
+    name: "Бульдозер KOMATSU D65 - Гусеничный, мощность 190 л.с.",
+    price: 3200000,
+    rating: 4.6,
+    reviews: 156,
+    image: shoesImg,
+    category: "bulldozers"
+  },
+  {
+    id: "4",
+    name: "Погрузчик VOLVO L120H - Фронтальный, ковш 3.5 м³",
+    price: 2750000,
+    originalPrice: 3100000,
+    rating: 4.7,
+    reviews: 98,
+    image: laptopImg,
+    badge: "Акция",
+    category: "loaders"
+  },
+  {
+    id: "5",
+    name: "Самосвал KAMAZ 65115 - Грузоподъемность 15 тонн",
+    price: 1850000,
+    originalPrice: 2100000,
+    rating: 4.5,
+    reviews: 234,
+    image: headphonesImg,
+    category: "trucks"
+  },
+  {
+    id: "6",
+    name: "Компрессор Atlas Copco - Передвижной, производительность 12 м³/мин",
+    price: 850000,
+    rating: 4.4,
+    reviews: 67,
+    image: phoneImg,
+    badge: "Проф",
+    category: "tools"
+  },
+  {
+    id: "7",
+    name: "Виброкаток BOMAG 120 - Двухвальцовый, вес 12 тонн",
+    price: 1950000,
+    originalPrice: 2200000,
+    rating: 4.3,
+    reviews: 43,
+    image: shoesImg,
+    category: "construction"
+  },
+  {
+    id: "8",
+    name: "Телескопический погрузчик MANITOU MLT 634 - Высота подъема 6 м",
+    price: 1650000,
+    rating: 4.6,
+    reviews: 78,
+    image: laptopImg,
+    badge: "Надежный",
+    category: "loaders"
+  }
 ];
 
 const categories = [
-  "Все категории",
-  "Экскаваторы", 
-  "Автокраны",
-  "Грузовики",
-  "Погрузчики",
-  "Инструменты",
-  "Стройтехника"
+  { id: "all", label: "Все категории", count: catalogProducts.length },
+  { id: "excavators", label: "Экскаваторы", count: catalogProducts.filter(p => p.category === "excavators").length },
+  { id: "cranes", label: "Автокраны", count: catalogProducts.filter(p => p.category === "cranes").length },
+  { id: "trucks", label: "Грузовики", count: catalogProducts.filter(p => p.category === "trucks").length },
+  { id: "loaders", label: "Погрузчики", count: catalogProducts.filter(p => p.category === "loaders").length },
+  { id: "tools", label: "Инструменты", count: catalogProducts.filter(p => p.category === "tools").length },
+  { id: "construction", label: "Стройтехника", count: catalogProducts.filter(p => p.category === "construction").length },
+  { id: "bulldozers", label: "Бульдозеры", count: catalogProducts.filter(p => p.category === "bulldozers").length }
 ];
 
 const Catalog = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Все категории");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const filteredProducts = catalogProducts.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "Все категории" || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const getFilteredProducts = (categoryId: string) => {
+    return catalogProducts.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = categoryId === "all" || product.category === categoryId;
+      return matchesSearch && matchesCategory;
+    });
+  };
+
+  const filteredProducts = getFilteredProducts(selectedCategory);
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,8 +181,8 @@ const Catalog = () => {
             </div>
           </div>
 
-          {/* Search and Filters */}
-          <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search and Controls */}
+          <div className="flex flex-col lg:flex-row gap-4 items-end">
             {/* Search */}
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -124,100 +194,124 @@ const Catalog = () => {
               />
             </div>
 
-            {/* Category Filter */}
-            <div className="flex gap-2 flex-wrap lg:flex-nowrap">
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                  className={selectedCategory === category ? "bg-primary hover:bg-primary/90" : ""}
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-
             {/* View Mode Toggle */}
-            <div className="flex border border-border rounded-md">
-              <Button
-                variant={viewMode === 'grid' ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="rounded-r-none"
-              >
-                <GridIcon className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="rounded-l-none"
-              >
-                <List className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Вид:</span>
+              <div className="flex border border-border rounded-md">
+                <Button
+                  variant={viewMode === 'grid' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className="rounded-r-none"
+                >
+                  <GridIcon className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className="rounded-l-none"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Results */}
+      {/* Catalog Content */}
       <div className="container mx-auto px-4 py-8">
-        {/* Results Count */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="text-muted-foreground">
-            Найдено {filteredProducts.length} предложений
-            {selectedCategory !== "Все категории" && (
-              <span> в категории "{selectedCategory}"</span>
-            )}
-          </div>
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Сортировка: По популярности</span>
-          </div>
-        </div>
-
-        {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
-          <div className={`grid gap-6 ${
-            viewMode === 'grid' 
-              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-              : 'grid-cols-1'
-          }`}>
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </div>
-        ) : (
-          <Card className="bg-card border-border">
-            <CardContent className="p-12 text-center">
-              <div className="text-muted-foreground mb-4">
-                <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">Товары не найдены</h3>
-                <p>Попробуйте изменить параметры поиска или выберите другую категорию</p>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("Все категории");
-                }}
+        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
+          {/* Category Tabs */}
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 mb-8">
+            {categories.map((category) => (
+              <TabsTrigger 
+                key={category.id} 
+                value={category.id}
+                className="text-xs lg:text-sm"
               >
-                Сбросить фильтры
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+                <div className="flex flex-col items-center">
+                  <span>{category.label}</span>
+                  <Badge variant="secondary" className="text-xs mt-1">
+                    {getFilteredProducts(category.id).length}
+                  </Badge>
+                </div>
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        {/* Load More */}
-        {filteredProducts.length > 0 && (
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg">
-              Загрузить ещё
-            </Button>
-          </div>
-        )}
+          {/* Tab Content for each category */}
+          {categories.map((category) => (
+            <TabsContent key={category.id} value={category.id} className="space-y-6">
+              {/* Results Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    {getFilteredProducts(category.id).length}
+                  </span>
+                  {" "}предложений
+                  {category.id !== "all" && (
+                    <span> в категории "{category.label}"</span>
+                  )}
+                  {searchQuery && (
+                    <span> по запросу "{searchQuery}"</span>
+                  )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Сортировка: По популярности</span>
+                </div>
+              </div>
+
+              {/* Products Display */}
+              {getFilteredProducts(category.id).length > 0 ? (
+                <div className={`grid gap-6 ${
+                  viewMode === 'grid' 
+                    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+                    : 'grid-cols-1 max-w-4xl mx-auto'
+                }`}>
+                  {getFilteredProducts(category.id).map((product) => (
+                    <ProductCard key={product.id} {...product} />
+                  ))}
+                </div>
+              ) : (
+                <Card className="bg-card border-border">
+                  <CardContent className="p-12 text-center">
+                    <div className="text-muted-foreground mb-4">
+                      <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <h3 className="text-lg font-semibold mb-2">Товары не найдены</h3>
+                      <p>
+                        {searchQuery ? 
+                          `Не найдено товаров по запросу "${searchQuery}" в категории "${category.label}"` :
+                          `В категории "${category.label}" пока нет товаров`
+                        }
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedCategory("all");
+                      }}
+                    >
+                      Показать все товары
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Load More */}
+              {getFilteredProducts(category.id).length > 8 && (
+                <div className="text-center pt-8">
+                  <Button variant="outline" size="lg">
+                    Загрузить ещё ({getFilteredProducts(category.id).length - 8} товаров)
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+          ))}
+        </Tabs>
       </div>
 
       <Footer />
