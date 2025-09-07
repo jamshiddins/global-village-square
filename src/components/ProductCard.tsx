@@ -1,14 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { useNavigation } from "@/hooks/useNavigation";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCart } from "@/hooks/useCart";
-import { useWishlist } from "@/hooks/useWishlist";
-import { useState } from "react";
-import { Star, Heart, ShoppingCart, Eye } from "lucide-react";
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Heart, ShoppingCart, Eye, Star, Share2, ArrowRight } from 'lucide-react';
+import { useNavigation } from '@/hooks/useNavigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
+import { useToast } from '@/hooks/use-toast';
 
-interface ProductCardProps {
+export interface ProductCardProps {
   id: string;
   name: string;
   price: number;
@@ -18,9 +19,10 @@ interface ProductCardProps {
   image: string;
   badge?: string;
   isWishlisted?: boolean;
+  className?: string;
 }
 
-export const ProductCard = ({
+export const ProductCard: React.FC<ProductCardProps> = ({
   id,
   name,
   price,
@@ -30,165 +32,232 @@ export const ProductCard = ({
   image,
   badge,
   isWishlisted = false,
-}: ProductCardProps) => {
-  const { navigateToProduct, handleAction } = useNavigation();
+  className = ''
+}) => {
+  const { navigateToProduct } = useNavigation();
   const { user } = useAuth();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { toast } = useToast();
   const [isHovered, setIsHovered] = useState(false);
-  const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
-  
-  const wishlisted = isInWishlist(id);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const isInWishlistState = isInWishlist(id) || isWishlisted;
+  const discountPercentage = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
-      handleAction("Войдите, чтобы добавлять в избранное");
+      toast({
+        title: "Войдите в аккаунт",
+        description: "Для добавления в избранное необходимо войти в систему",
+        variant: "destructive"
+      });
       return;
     }
-    
-    if (wishlisted) {
+
+    if (isInWishlistState) {
       removeFromWishlist(id);
+      toast({
+        title: "Удалено из избранного",
+        description: name,
+      });
     } else {
       addToWishlist(id, name, price, image);
+      toast({
+        title: "Добавлено в избранное",
+        description: name,
+      });
     }
   };
 
-  const handleAddToCartClick = (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!user) {
-      handleAction("Войдите, чтобы добавлять в корзину");
-      return;
-    }
     addToCart(id, name, price, image);
+    toast({
+      title: "Добавлено в корзину",
+      description: name,
+    });
   };
 
-  const handleBuyNow = (e: React.MouseEvent) => {
+  const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!user) {
-      handleAction("Войдите для покупки");
-      return;
+    if (navigator.share) {
+      navigator.share({
+        title: name,
+        text: `Посмотрите на ${name} на MYDON`,
+        url: window.location.origin + `/product/${id}`
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.origin + `/product/${id}`);
+      toast({
+        title: "Ссылка скопирована",
+        description: "Ссылка на товар скопирована в буфер обмена",
+      });
     }
-    handleAction("Переход к оформлению покупки");
   };
 
-  const handleQuickView = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    handleAction("Быстрый просмотр товара");
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
   };
 
   return (
     <Card 
-      className="group bg-product-card border-border hover:border-primary/20 hover:bg-product-hover transition-all duration-300 hover:shadow-product cursor-pointer overflow-hidden animate-fade-in"
-      onClick={() => navigateToProduct(id)}
+      className={`group cursor-pointer overflow-hidden bg-product-card hover:bg-product-hover border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-product hover:-translate-y-1 ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => navigateToProduct(id)}
     >
       <CardContent className="p-0">
-        {/* Image container */}
-        <div className="relative overflow-hidden">
-          <img 
-            src={image} 
+        {/* Изображение товара */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+          {!imageLoaded && (
+            <div className="absolute inset-0 animate-pulse bg-muted flex items-center justify-center">
+              <div className="w-16 h-16 bg-muted-foreground/20 rounded-lg flex items-center justify-center">
+                <Eye className="w-6 h-6 text-muted-foreground/40" />
+              </div>
+            </div>
+          )}
+          
+          <img
+            src={image}
             alt={name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageLoaded(true)}
           />
           
           {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          <div className="absolute top-3 left-3 flex flex-col gap-2">
             {badge && (
-              <Badge variant="destructive" className="text-xs font-semibold animate-scale-in">
+              <Badge 
+                variant={badge === 'ХИТ' ? 'default' : badge === 'НОВИНКА' ? 'secondary' : 'outline'}
+                className={`text-xs font-bold ${
+                  badge === 'ХИТ' ? 'bg-badge-success text-white' :
+                  badge === 'НОВИНКА' ? 'bg-badge-info text-white' :
+                  badge === 'СКИДКА' ? 'bg-badge-warning text-white' :
+                  'bg-badge-info text-white'
+                }`}
+              >
                 {badge}
               </Badge>
             )}
-            {discount > 0 && (
-              <Badge variant="secondary" className="text-xs font-semibold bg-accent animate-scale-in">
-                -{discount}%
+            {discountPercentage > 0 && (
+              <Badge variant="destructive" className="text-xs font-bold bg-badge-danger text-white">
+                -{discountPercentage}%
               </Badge>
             )}
           </div>
 
-          {/* Action buttons */}
-          <div className="absolute top-2 right-2 flex flex-col gap-1">
+          {/* Действия при наведении */}
+          <div className={`absolute top-3 right-3 flex flex-col gap-2 transition-all duration-300 ${
+            isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2'
+          }`}>
             <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
+              variant="secondary"
+              size="sm"
+              className="w-10 h-10 rounded-full p-0 bg-white/90 hover:bg-white shadow-md"
               onClick={handleWishlistToggle}
             >
               <Heart 
-                className={`h-4 w-4 ${wishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
+                className={`w-4 h-4 transition-colors ${
+                  isInWishlistState ? 'fill-red-500 text-red-500' : 'text-gray-600'
+                }`} 
               />
             </Button>
             
             <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-              onClick={handleQuickView}
+              variant="secondary"
+              size="sm"
+              className="w-10 h-10 rounded-full p-0 bg-white/90 hover:bg-white shadow-md"
+              onClick={handleShare}
             >
-              <Eye className="h-4 w-4 text-gray-600" />
+              <Share2 className="w-4 h-4 text-gray-600" />
             </Button>
           </div>
 
-          {/* Quick add to cart */}
-          <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+          {/* Быстрый просмотр */}
+          <div className={`absolute bottom-3 left-3 right-3 transition-all duration-300 ${
+            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+          }`}>
             <Button 
-              variant="cart" 
+              variant="secondary" 
               size="sm" 
-              className="w-full animate-slide-in-right"
-              onClick={handleAddToCartClick}
+              className="w-full bg-white/90 hover:bg-white text-gray-900 shadow-md"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToProduct(id);
+              }}
             >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              В Корзину
+              <Eye className="w-4 h-4 mr-2" />
+              Быстрый просмотр
             </Button>
           </div>
         </div>
 
-        {/* Product info */}
+        {/* Информация о товаре */}
         <div className="p-4 space-y-3">
-          {/* Rating */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-4 w-4 transition-colors duration-200 ${
-                    i < Math.floor(rating) 
-                      ? 'text-rating fill-current' 
-                      : 'text-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm text-muted-foreground">({reviews})</span>
-          </div>
-
-          {/* Product name */}
-          <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+          {/* Название */}
+          <h3 className="font-semibold text-foreground line-clamp-2 min-h-[3rem] text-sm leading-tight">
             {name}
           </h3>
 
-          {/* Price */}
+          {/* Рейтинг */}
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-price">
-              {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(price)}
-            </span>
-            {originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">
-                {new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 0 }).format(originalPrice)}
-              </span>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 fill-rating text-rating" />
+              <span className="text-sm font-medium text-foreground">{rating}</span>
+            </div>
+            <span className="text-xs text-muted-foreground">({reviews} отзывов)</span>
+          </div>
+
+          {/* Цена */}
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold text-price">{formatPrice(price)}</span>
+              {originalPrice && (
+                <span className="text-sm text-muted-foreground line-through">
+                  {formatPrice(originalPrice)}
+                </span>
+              )}
+            </div>
+            {discountPercentage > 0 && (
+              <p className="text-xs text-badge-success font-medium">
+                Экономия {formatPrice(originalPrice! - price)}
+              </p>
             )}
           </div>
 
-          {/* Buy now button */}
-          <Button 
-            variant="buy" 
-            size="sm" 
-            className={`w-full transition-all duration-300 ${isHovered ? 'animate-pulse-glow' : ''}`}
-            onClick={handleBuyNow}
-          >
-            {user ? "Купить Сейчас" : "Войти для покупки"}
-          </Button>
+          {/* Кнопки действий */}
+          <div className="flex gap-2 pt-2">
+            <Button
+              onClick={handleAddToCart}
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+              size="sm"
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              В корзину
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              className="px-3 border-primary/20 hover:bg-primary/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToProduct(id);
+              }}
+            >
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

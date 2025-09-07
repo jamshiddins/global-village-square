@@ -8,72 +8,125 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 220 26% 14%;
+    /* MYDON 2.0 Design System - Light Mode */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Primary - MYDON Brand Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    /* Accent - MYDON Orange */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 217 91% 60%;
+
+    /* MYDON specific colors */
+    --hero-gradient: linear-gradient(135deg, hsl(217 91% 60%), hsl(25 95% 53%));
+    --dashboard-card: 0 0% 100%;
+    --dashboard-card-hover: 210 40% 98%;
+    --stats-positive: 142.1 76.2% 36.3%;
+    --stats-negative: 346.8 77.2% 49.8%;
+    --stats-neutral: 217 91% 60%;
+    --maydon-yellow: 48 96% 53%;
+    --maydon-gradient: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(25 95% 53%) 100%);
+    
+    /* Product specific colors */
+    --product-card: 0 0% 100%;
+    --product-hover: 210 40% 98%;
+    --price-color: 142.1 76.2% 36.3%;
+    --rating-color: 48 96% 53%;
+    --badge-success: 142.1 76.2% 36.3%;
+    --badge-warning: 38 92% 50%;
+    --badge-danger: 346.8 77.2% 49.8%;
+    --badge-info: 217 91% 60%;
+    
+    /* AI Assistant colors */
+    --ai-assistant-bg: 217 91% 60%;
+    --ai-assistant-hover: 217 91% 55%;
+    --ai-bubble-user: 217 91% 60%;
+    --ai-bubble-bot: 210 40% 96%;
+    
+    /* Shadows with modern feel */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.07);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
+    --shadow-product: 0 4px 20px hsl(217 91% 60% / 0.15);
+    --shadow-ai: 0 8px 32px hsl(217 91% 60% / 0.2);
+    
+    /* Modern animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    --radius: 12px;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  .dark {
+    /* Dark mode optimized for MYDON */
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 220 26% 16%;
+    --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 26% 16%;
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 48 100% 67%;
-    --primary-foreground: 220 26% 14%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222.2 84% 4.9%;
 
-    --secondary: 217.2 27% 20%;
+    --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 27% 18%;
+    --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 48 100% 67%;
-    --accent-foreground: 220 26% 14%;
+    --accent: 25 95% 53%;
+    --accent-foreground: 222.2 84% 4.9%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 27% 20%;
-    --input: 217.2 27% 18%;
-    --ring: 48 100% 67%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217 91% 60%;
 
-    /* MAYDON specific colors */
-    --hero-gradient: linear-gradient(135deg, hsl(48 100% 67%), hsl(25 95% 53%));
-    --dashboard-card: 217.2 27% 18%;
-    --dashboard-card-hover: 217.2 27% 22%;
-    --stats-positive: 120 60% 55%;
-    --stats-negative: 0 62.8% 55%;
-    --stats-neutral: 48 100% 67%;
-    --maydon-yellow: 48 100% 67%;
-    --maydon-gradient: linear-gradient(135deg, hsl(48 100% 67%) 0%, hsl(38 92% 60%) 100%);
+    --product-card: 217.2 32.6% 15%;
+    --product-hover: 217.2 32.6% 19%;
     
-    /* Product specific colors */
-    --product-card: 220 26% 17%;
-    --product-hover: 220 26% 19%;
-    --price-color: 120 60% 55%;
-    --rating-color: 48 100% 67%;
-    --badge-success: 120 60% 50%;
-    --badge-warning: 38 92% 60%;
+    --ai-bubble-user: 217 91% 60%;
+    --ai-bubble-bot: 217.2 32.6% 17.5%;
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
-    --shadow-product: 0 4px 12px hsl(0 0% 0% / 0.1);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 220 26% 12%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 48 100% 67%;
-    --sidebar-primary-foreground: 220 26% 14%;
-    --sidebar-accent: 217.2 27% 16%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 27% 18%;
-    --sidebar-ring: 48 100% 67%;
+    --shadow-product: 0 4px 20px hsl(0 0% 0% / 0.3);
+    --shadow-ai: 0 8px 32px hsl(0 0% 0% / 0.4);
   }
 
   .dark {
