@@ -4,6 +4,8 @@ import { CategorySection } from "@/components/CategorySection";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Footer } from "@/components/Footer";
 import { DemoDataBanner } from "@/components/DemoDataBanner";
+import { AIAssistant } from "@/components/AIAssistant";
+import { VoiceSearch } from "@/components/VoiceSearch";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -55,6 +57,12 @@ const Index = () => {
           <ProductGrid />
         </main>
         <Footer />
+        
+        {/* AI Assistant */}
+        <AIAssistant />
+        
+        {/* Voice Search */}
+        <VoiceSearch />
       </div>
     </>
   );

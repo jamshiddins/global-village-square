@@ -11,6 +11,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { GamificationWidget } from '@/components/GamificationWidget';
+import { FinanceCalculator } from '@/components/FinanceCalculator';
 import { 
   User, 
   Building2, 
@@ -230,10 +232,12 @@ const Profile = () => {
 
             {/* Tabs for different sections */}
             <Tabs defaultValue="cart" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="cart">Корзина</TabsTrigger>
                 <TabsTrigger value="wishlist">Избранное</TabsTrigger>
                 <TabsTrigger value="history">История</TabsTrigger>
+                <TabsTrigger value="gamification">Достижения</TabsTrigger>
+                <TabsTrigger value="finance">Финансы</TabsTrigger>
               </TabsList>
               
               <TabsContent value="cart" className="mt-6">
@@ -364,6 +368,24 @@ const Profile = () => {
                         )}
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="gamification" className="mt-6">
+                <GamificationWidget />
+              </TabsContent>
+
+              <TabsContent value="finance" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Финансовые инструменты</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <FinanceCalculator 
+                      price={cartItems.length > 0 ? cartItems[0].product_price : 5000000}
+                      productName={cartItems.length > 0 ? cartItems[0].product_name : "Спецтехника"}
+                    />
                   </CardContent>
                 </Card>
               </TabsContent>

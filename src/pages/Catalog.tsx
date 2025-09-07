@@ -211,22 +211,22 @@ const Catalog = () => {
                 {/* Categories */}
                 <div className="mb-6">
                   <h4 className="font-medium mb-3">Категории</h4>
-                  <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <TabsList className="grid w-full grid-cols-1 h-auto gap-1 bg-transparent p-0">
-                      {categories.map((category) => (
-                        <TabsTrigger
-                          key={category.id}
-                          value={category.id}
-                          className="w-full justify-between text-left data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                        >
-                          <span>{category.name}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {category.count}
-                          </Badge>
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                  </Tabs>
+                  <div className="space-y-1">
+                    {categories.map((category) => (
+                      <Button
+                        key={category.id}
+                        variant={selectedCategory === category.id ? "default" : "ghost"}
+                        size="sm"
+                        className="w-full justify-between text-left"
+                        onClick={() => setSelectedCategory(category.id)}
+                      >
+                        <span>{category.name}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {category.count}
+                        </Badge>
+                      </Button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Price Range */}
@@ -311,48 +311,46 @@ const Catalog = () => {
 
           {/* Products Grid */}
           <div className="lg:col-span-3">
-            <TabsContent value={selectedCategory} className="mt-0">
-              {filteredProducts.length === 0 ? (
-                <div className="text-center py-16">
-                  <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h2 className="text-xl font-semibold mb-2">Товары не найдены</h2>
-                  <p className="text-muted-foreground mb-6">
-                    Попробуйте изменить параметры поиска или очистить фильтры
-                  </p>
-                  <Button onClick={clearFilters}>Очистить фильтры</Button>
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-16">
+                <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h2 className="text-xl font-semibold mb-2">Товары не найдены</h2>
+                <p className="text-muted-foreground mb-6">
+                  Попробуйте изменить параметры поиска или очистить фильтры
+                </p>
+                <Button onClick={clearFilters}>Очистить фильтры</Button>
+              </div>
+            ) : (
+              <>
+                <div className={`grid gap-6 ${
+                  viewMode === 'grid' 
+                    ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
+                    : 'grid-cols-1'
+                }`}>
+                  {filteredProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.name}
+                      price={product.price}
+                      originalPrice={product.originalPrice}
+                      rating={product.rating}
+                      reviews={product.reviews}
+                      image={product.image}
+                      badge={product.badge}
+                    />
+                  ))}
                 </div>
-              ) : (
-                <>
-                  <div className={`grid gap-6 ${
-                    viewMode === 'grid' 
-                      ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                      : 'grid-cols-1'
-                  }`}>
-                    {filteredProducts.map((product) => (
-                      <ProductCard
-                        key={product.id}
-                        id={product.id}
-                        name={product.name}
-                        price={product.price}
-                        originalPrice={product.originalPrice}
-                        rating={product.rating}
-                        reviews={product.reviews}
-                        image={product.image}
-                        badge={product.badge}
-                      />
-                    ))}
+                
+                {filteredProducts.length > 12 && (
+                  <div className="text-center mt-12">
+                    <Button variant="outline" size="lg">
+                      Загрузить ещё товары
+                    </Button>
                   </div>
-                  
-                  {filteredProducts.length > 12 && (
-                    <div className="text-center mt-12">
-                      <Button variant="outline" size="lg">
-                        Загрузить ещё товары
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
-            </TabsContent>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
